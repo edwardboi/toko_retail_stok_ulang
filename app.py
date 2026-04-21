@@ -53,11 +53,11 @@ with col1:
     month = target_date.month
     week_of_year = target_date.isocalendar()[1]
     
+    st.info(f"📌 **Info:** Sistem akan memprediksi untuk **Bulan ke-{month}**, pada **Minggu ke-{week_of_year}** dalam tahun ini.")
+    
     is_holiday = st.selectbox("🎉 Apakah Minggu Tersebut Ada Hari Libur Nasional / Event?", [0, 1], format_func=lambda x: "Ya (1)" if x==1 else "Tidak (0)")
 
 with col2:
-    st.info(f"📌 **Info:** Sistem akan memprediksi untuk **Bulan ke-{month}**, pada **Minggu ke-{week_of_year}** dalam tahun ini.")
-    
     kategori_list = [
         "KEBUTUHAN RUMAH TANGGA", "LAIN-LAIN", "MAKANAN INSTAN", "MINUMAN", 
         "OBAT", "PERAWATAN DIRI DAN KOSMETIK", "PERLENGKAPAN BAYI", 
