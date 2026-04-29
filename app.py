@@ -16,9 +16,9 @@ st.divider()
 def load_models():
     folder = "model"
     models = {
-        "1 Minggu": joblib.load(f"{folder}/model_lgbm_toko.pkl"),
-        "2 Minggu": joblib.load(f"{folder}/model_lgbm_toko_plus2.pkl"),
-        "3 Minggu": joblib.load(f"{folder}/model_lgbm_toko_plus3.pkl")
+        "1_minggu": joblib.load(f"{folder}/model_lgbm_toko.pkl"),
+        "2_minggu": joblib.load(f"{folder}/model_lgbm_toko_plus2.pkl"),
+        "3_minggu": joblib.load(f"{folder}/model_lgbm_toko_plus3.pkl")
     }
     return models
 
