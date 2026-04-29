@@ -15,9 +15,14 @@ st.divider()
 @st.cache_resource
 def load_models():
     folder = "model"
-    return joblib.load(f"{folder}/model_lgbm_toko.pkl")
+    models = {
+        "1 Minggu": joblib.load(f"{folder}/model_lgbm_toko.pkl"),
+        "2 Minggu": joblib.load(f"{folder}/model_lgbm_toko_plus2.pkl"),
+        "3 Minggu": joblib.load(f"{folder}/model_lgbm_toko_plus3.pkl")
+    }
+    return models
 
-model_lgbm = load_models()
+models = load_models()
 
 # ==========================================
 # 2. KONDISI FISIK TOKO
@@ -114,28 +119,54 @@ if st.button("🚀 HITUNG REKOMENDASI ORDER!", type="primary", use_container_wid
     input_data = pd.DataFrame([input_dict], columns=urutan_kolom)
 
     # --- PREDIKSI & KALKULASI ---
-    pred_lgbm = max(0, round(model_lgbm.predict(input_data)[0]))
+    pred_1w = max(0, round(models["1_minggu"].predict(input_data)[0]))
+    pred_2w = max(0, round(models["2_minggu"].predict(input_data)[0]))
+    pred_3w = max(0, round(models["3_minggu"].predict(input_data)[0]))
         
     # Kalkulasi Supply Chain untuk LightGBM
-    order_lgbm = max(0, (pred_lgbm + safety_stock) - stok_sekarang)
+    order_1w = max(0, (pred_1w + safety_stock) - stok_sekarang)
+    order_2w = max(0, (pred_2w + safety_stock) - stok_sekarang)
+    order_3w = max(0, (pred_3w + safety_stock) - stok_sekarang)
     
     # ==========================================
     # TAMPILAN HASIL
     # ==========================================
-    st.subheader(f"📊 Laporan Keputusan Order: {nama_barang}")
+    st.subheader(f"📊 Laporan Proyeksi Penjualan & Restock: {nama_barang}")
     st.caption(f"Kondisi Saat Ini: **Safety Stock = {safety_stock} pcs** | **Sisa Stok di Toko = {stok_sekarang} pcs**")
     st.write("")
     
     # Membuat 3 kolom
-    col_kiri, col_tengah, col_kanan = st.columns([1, 2, 1])
+    res_col1, res_col2, res_col3 = st.columns(3)
     
-    with col_tengah:
-        st.success("⚡ **Rekomendasi LightGBM**")
-        st.metric(label=f"🧠 Prediksi AI (Estimasi Laku Minggu ke-{week_of_year})", value=f"{pred_lgbm} pcs")
+    # --- TAMPILAN MINGGU KE-1 ---
+    with res_col1:
+        st.success("1️⃣ **Minggu Depan (1W)**")
+        st.metric(label=f"Estimasi Laku (Minggu ke-{week_of_year})", value=f"{pred_1w} pcs")
         
-        if order_lgbm > 0:
-            st.metric(label="🛒 KEPUTUSAN ORDER (Kuantitas Restock)", value=f"{order_lgbm} pcs", delta="Perlu Order Barang Segera!")
+        # Keputusan Order ditaruh di minggu pertama karena paling mendesak
+        if order_1w > 0:
+            st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_1w} pcs", delta="Perlu Order", delta_color="inverse")
         else:
-            st.metric(label="🛒 KEPUTUSAN ORDER (Kuantitas Restock)", value=f"{order_lgbm} pcs", delta="Stok Masih Aman", delta_color="off")
-                
-        st.divider()
+            st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_1w} pcs", delta="Stok Aman", delta_color="off")
+            
+    # --- TAMPILAN MINGGU KE-2 ---
+    with res_col2:
+        st.info(f"2️⃣ **2 Minggu Depan (W{week_of_year + 1})**")
+        st.metric(label="Estimasi Laku", value=f"{pred_2w} pcs")
+        
+        if order_2w > 0:
+            st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_2w} pcs", delta="Perlu Order", delta_color="inverse")
+        else:
+            st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_2w} pcs", delta="Stok Aman", delta_color="off")
+
+    # --- TAMPILAN MINGGU KE-3 ---
+    with res_col3:
+        st.warning(f"3️⃣ **3 Minggu Depan (W{week_of_year + 2})**")
+        st.metric(label="Estimasi Laku", value=f"{pred_3w} pcs")
+        
+        if order_3w > 0:
+            st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_3w} pcs", delta="Perlu Order", delta_color="inverse")
+        else:
+            st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_3w} pcs", delta="Stok Aman", delta_color="off")
+
+    st.divider()
