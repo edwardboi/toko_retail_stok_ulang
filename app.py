@@ -73,9 +73,9 @@ with col2:
     item_id_avg_sales = st.number_input("📊 Rata-rata Penjualan Historis Barang Ini", value=20.0)
 
 with col3:
-    qty_lag_1w = st.number_input("📈 Laku Minggu Lalu (Lag 1W)", value=22.0)
-    qty_lag_2w = st.number_input("📈 Laku 2 Minggu Lalu (Lag 2W)", value=18.0)
-    qty_roll_mean_4w = st.number_input("📊 Rata-rata 4 Minggu Terakhir", value=20.5)
+    qty_lag_1w = st.number_input("📈 Laku Minggu Lalu (Lag 1W)", min_value=0, value=22.0)
+    qty_lag_2w = st.number_input("📈 Laku 2 Minggu Lalu (Lag 2W)", min_value=0, value=18.0)
+    qty_roll_mean_4w = st.number_input("📊 Rata-rata 4 Minggu Terakhir", min_value=0, value=20.5)
 
 # ==========================================
 # 4. TOMBOL EKSEKUSI & KALKULASI SUPPLY CHAIN
