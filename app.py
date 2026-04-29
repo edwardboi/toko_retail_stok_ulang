@@ -140,10 +140,9 @@ if st.button("🚀 HITUNG REKOMENDASI ORDER!", type="primary", use_container_wid
     
     # --- TAMPILAN MINGGU KE-1 ---
     with res_col1:
-        st.success("1️⃣ **Minggu Depan (1W)**")
+        st.success("1️⃣ **Minggu Depan**")
         st.metric(label=f"Estimasi Laku (Minggu ke-{week_of_year})", value=f"{pred_1w} pcs")
         
-        # Keputusan Order ditaruh di minggu pertama karena paling mendesak
         if order_1w > 0:
             st.metric(label="🛒 KEPUTUSAN RESTOCK", value=f"{order_1w} pcs", delta="Perlu Order", delta_color="inverse")
         else:
@@ -151,7 +150,7 @@ if st.button("🚀 HITUNG REKOMENDASI ORDER!", type="primary", use_container_wid
             
     # --- TAMPILAN MINGGU KE-2 ---
     with res_col2:
-        st.info(f"2️⃣ **2 Minggu Depan (W{week_of_year + 1})**")
+        st.info(f"2️⃣ **2 Minggu Depan**")
         st.metric(label="Estimasi Laku", value=f"{pred_2w} pcs")
         
         if order_2w > 0:
@@ -161,7 +160,7 @@ if st.button("🚀 HITUNG REKOMENDASI ORDER!", type="primary", use_container_wid
 
     # --- TAMPILAN MINGGU KE-3 ---
     with res_col3:
-        st.warning(f"3️⃣ **3 Minggu Depan (W{week_of_year + 2})**")
+        st.warning(f"3️⃣ **3 Minggu Depan**")
         st.metric(label="Estimasi Laku", value=f"{pred_3w} pcs")
         
         if order_3w > 0:
