@@ -81,7 +81,7 @@ def process_raw_transaction_data(df):
 # 2. PILIHAN MODE INPUT
 # ==========================================
 st.subheader("⚙️ Mode Input Data")
-mode_input = st.radio("Pilih cara memasukkan data historis:", ["Manual", "Upload Data Transaksi (CSV)"], horizontal=True)
+mode_input = st.radio("Pilih cara memasukkan data historis:", ["Manual", "Unggah Data Transaksi (CSV)"], horizontal=True)
 
 # Inisialisasi Nilai Default
 def_nama_barang = "Roti Coklat"
@@ -97,8 +97,8 @@ kategori_list = [
     "PRODUK KHUSUS", "SEMBAKO", "SNACK"
 ]
 
-if mode_input == "Upload Data Transaksi (CSV)":
-    uploaded_file = st.file_uploader("📂 Upload file Data Transaksi (CSV)", type=['csv'])
+if mode_input == "Unggah Data Transaksi (CSV)":
+    uploaded_file = st.file_uploader("📂 Unggah file Data Transaksi (CSV)", type=['csv'])
     
     if uploaded_file is not None:
         try:
