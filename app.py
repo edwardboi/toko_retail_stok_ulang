@@ -31,28 +31,39 @@ models = load_models()
 def process_raw_transaction_data(df):
     """
     Mengubah data transaksi mentah harian menjadi data mingguan 
-    dengan fitur Lag dan Rolling Mean secara otomatis.
+    dengan zero imputation dan fitur historis secara otomatis.
     """
     
+    # 1. Pastikan format tanggal
     df['Tanggal'] = pd.to_datetime(df['Tanggal'], dayfirst=True, errors='coerce')
-    
-    # 1. Hapus baris yang tanggalnya kosong / error
     df = df.dropna(subset=['Tanggal'])
     
-    # 2. Agregasi
+    # 2. Agregasi Minggu
     weekly_df = df.groupby([
         pd.Grouper(key='Tanggal', freq='W-MON'), 
         'Detail Items', 
         'Kategori'
     ])['Total Item'].sum().reset_index()
     
-    # 3. Rename kolom
+    # 3. ZERO IMPUTATION
+    # Menggunakan pivot table agar setiap barang punya baris di setiap minggu kalender
+    pivot_df = weekly_df.pivot_table(
+        index='Tanggal', 
+        columns=['Detail Items', 'Kategori'], 
+        values='Total Item', 
+        aggfunc='sum'
+    ).fillna(0)
+    
+    # 4. Kembalikan ke bentuk vertikal
+    weekly_df = pivot_df.unstack().reset_index(name='quantity')
+    
+    # 5. Rename kolom
     weekly_df.rename(columns={'Tanggal': 'Date', 'Detail Items': 'item_id', 'Kategori': 'kategori', 'Total Item': 'quantity'}, inplace=True)
     
-    # 4. Urutkan secara kronologis
+    # 6. Urutkan secara kronologis
     weekly_df = weekly_df.sort_values(['item_id', 'Date'])
     
-    # 5. PEMBUATAN FITUR HISTORIS
+    # 7. PEMBUATAN FITUR HISTORIS
     weekly_df['Qty_Lag_1W'] = weekly_df.groupby('item_id')['quantity'].shift(1).fillna(0)
     weekly_df['Qty_Lag_2W'] = weekly_df.groupby('item_id')['quantity'].shift(2).fillna(0)
     
